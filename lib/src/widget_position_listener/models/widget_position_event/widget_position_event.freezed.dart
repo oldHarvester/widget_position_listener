@@ -126,10 +126,11 @@ class __$$WidgetCheckPositionEventImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$WidgetCheckPositionEventImpl implements WidgetCheckPositionEvent {
+class _$WidgetCheckPositionEventImpl extends WidgetCheckPositionEvent {
   const _$WidgetCheckPositionEventImpl({
     required final Set<WidgetPositionId> ids,
-  }) : _ids = ids;
+  }) : _ids = ids,
+       super._();
 
   final Set<WidgetPositionId> _ids;
   @override
@@ -245,10 +246,11 @@ class _$WidgetCheckPositionEventImpl implements WidgetCheckPositionEvent {
   }
 }
 
-abstract class WidgetCheckPositionEvent implements WidgetPositionEvent {
+abstract class WidgetCheckPositionEvent extends WidgetPositionEvent {
   const factory WidgetCheckPositionEvent({
     required final Set<WidgetPositionId> ids,
   }) = _$WidgetCheckPositionEventImpl;
+  const WidgetCheckPositionEvent._() : super._();
 
   Set<WidgetPositionId> get ids;
 
@@ -339,12 +341,12 @@ class __$$WidgetPositionUpdatedEventImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$WidgetPositionUpdatedEventImpl implements WidgetPositionUpdatedEvent {
+class _$WidgetPositionUpdatedEventImpl extends WidgetPositionUpdatedEvent {
   const _$WidgetPositionUpdatedEventImpl({
     required this.id,
     required this.state,
     required this.updateType,
-  });
+  }) : super._();
 
   @override
   final WidgetPositionId id;
@@ -461,12 +463,13 @@ class _$WidgetPositionUpdatedEventImpl implements WidgetPositionUpdatedEvent {
   }
 }
 
-abstract class WidgetPositionUpdatedEvent implements WidgetPositionEvent {
+abstract class WidgetPositionUpdatedEvent extends WidgetPositionEvent {
   const factory WidgetPositionUpdatedEvent({
     required final WidgetPositionId id,
     required final WidgetPositionState state,
     required final WidgetPositionUpdatedType updateType,
   }) = _$WidgetPositionUpdatedEventImpl;
+  const WidgetPositionUpdatedEvent._() : super._();
 
   WidgetPositionId get id;
   WidgetPositionState get state;

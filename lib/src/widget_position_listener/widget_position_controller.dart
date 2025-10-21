@@ -50,17 +50,17 @@ final class WidgetPositionController {
         duration: force ? Duration.zero : Duration(seconds: 1),
         onAction: () {
           _restartRefreshThrottler();
-          _updateAllPositions();
+          _sendUpdateAllPositions();
         },
       );
     }
   }
 
-  void _updateAllPositions() {
-    _updatePositions(_ids.keys.toSet());
+  void _sendUpdateAllPositions() {
+    _sendUpdatePositions(_ids.keys.toSet());
   }
 
-  void _updatePositions(Set<WidgetPositionId> ids) {
+  void _sendUpdatePositions(Set<WidgetPositionId> ids) {
     _eventController.add(
       WidgetPositionEvent.checkPositions(
         ids: ids,
@@ -69,7 +69,7 @@ final class WidgetPositionController {
   }
 
   void forceUpdatePosition(WidgetPositionId id) {
-    _updatePositions({id});
+    _sendUpdatePositions({id});
   }
 
   void _onWindowChanged() {
@@ -162,7 +162,7 @@ final class WidgetPositionController {
         return newState;
       },
     );
-    
+
     if (changed) {
       _sendVisibilityChanged(id);
     }

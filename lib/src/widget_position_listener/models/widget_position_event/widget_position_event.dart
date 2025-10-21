@@ -1,3 +1,5 @@
+// ignore_for_file: unused_element
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../widget_position_id/widget_position_id.dart';
@@ -10,8 +12,15 @@ enum WidgetPositionUpdatedType {
   visibility,
 }
 
+enum WidgetPositionEventType {
+  checkPositions,
+  positionUpdated,
+}
+
 @Freezed(fromJson: false, toJson: false)
 sealed class WidgetPositionEvent with _$WidgetPositionEvent {
+  const WidgetPositionEvent._();
+
   const factory WidgetPositionEvent.checkPositions({
     required Set<WidgetPositionId> ids,
   }) = WidgetCheckPositionEvent;
@@ -21,4 +30,15 @@ sealed class WidgetPositionEvent with _$WidgetPositionEvent {
     required WidgetPositionState state,
     required WidgetPositionUpdatedType updateType,
   }) = WidgetPositionUpdatedEvent;
+
+  WidgetPositionEventType get type {
+    return when(
+      checkPositions: (ids) {
+        return WidgetPositionEventType.checkPositions;
+      },
+      positionUpdated: (id, state, updateType) {
+        return WidgetPositionEventType.positionUpdated;
+      },
+    );
+  }
 }
