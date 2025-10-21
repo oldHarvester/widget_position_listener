@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+import 'package:widget_position_listener/src/widget_position_listener/models/widget_position_event/widget_position_event.dart';
+import 'package:widget_position_listener/src/widget_position_listener/models/widget_position_state/widget_position_state.dart';
 
 import 'models/widget_position_id/widget_position_id.dart';
 import 'models/widget_position_metrics/widget_position_metrics.dart';
@@ -11,14 +13,10 @@ class WidgetPositionListener extends StatefulWidget {
   const WidgetPositionListener({
     super.key,
     required this.child,
-    required this.positionListener,
+    required this.onChange,
   });
 
-  final void Function(
-    WidgetPositionMetrics metrics,
-    VisibilityInfo visibilityInfo,
-  )
-  positionListener;
+  final void Function(WidgetPositionState positionState) onChange;
   final Widget child;
 
   @override
@@ -29,7 +27,7 @@ class _WidgetPositionListenerState extends State<WidgetPositionListener> {
   late final WidgetPositionId id;
   late final Key _visibilityKey = UniqueKey();
   final positionController = WidgetPositionController.instance;
-  StreamSubscription<WidgetPositionUpdateEvent>? _positionListener;
+  StreamSubscription<WidgetPositionEvent>? _positionListener;
 
   @override
   void initState() {
@@ -38,13 +36,28 @@ class _WidgetPositionListenerState extends State<WidgetPositionListener> {
     _startPositionListener();
   }
 
+  void _checkPosition() {
+    final metrics = WidgetPositionMetrics.fromContext(context);
+    if (metrics != null) {
+      positionController.changePositionMetrics(id, metrics);
+    }
+  }
+
   void _startPositionListener() {
-    _positionListener ??= positionController.eventStream.listen((event) {
-      if (mounted) {
-        final metrics = WidgetPositionMetrics.fromContext(context);
-        if (metrics != null) {}
-      }
-    });
+    _positionListener ??= positionController.eventStream.listen(
+      (event) {
+        if (mounted) {
+          event.when(
+            checkPositions: () {
+              _checkPosition();
+            },
+            positionUpdated: (id, state) {
+              widget.onChange(state);
+            },
+          );
+        }
+      },
+    );
   }
 
   void _stopPositionListener() {

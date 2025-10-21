@@ -6,19 +6,24 @@ import 'package:meta/meta.dart';
 
 import 'package:visibility_detector/visibility_detector.dart';
 import 'package:widget_position_listener/src/widget_position_listener/extensions/visibility_info_extension.dart';
+import 'package:widget_position_listener/src/widget_position_listener/models/widget_position_event/widget_position_event.dart';
+import 'package:widget_position_listener/src/widget_position_listener/models/widget_position_metrics/widget_position_metrics.dart';
 
 import 'models/widget_position_id/widget_position_id.dart';
 import 'models/widget_position_state/widget_position_state.dart';
 
-enum WidgetPositionUpdateEvent { refreshPosition }
-
 @internal
-final class WidgetPositionController with WidgetsBindingObserver {
+final class WidgetPositionController {
   WidgetPositionController._() {
-    WidgetsBinding.instance.addObserver(this);
+    _observer = WidgetPositionObserver(
+      onWindowChanged: _onWindowChanged,
+    );
   }
 
   static final instance = WidgetPositionController._();
+
+  // ignore: unused_field
+  late final WidgetPositionObserver _observer;
 
   final Map<WidgetPositionId, WidgetPositionState> _ids = {};
 
@@ -26,10 +31,10 @@ final class WidgetPositionController with WidgetsBindingObserver {
 
   int get visible => _visible;
 
-  final StreamController<WidgetPositionUpdateEvent> _eventController =
+  final StreamController<WidgetPositionEvent> _eventController =
       StreamController.broadcast();
 
-  Stream<WidgetPositionUpdateEvent> get eventStream => _eventController.stream;
+  Stream<WidgetPositionEvent> get eventStream => _eventController.stream;
 
   final ThrottleExecutor _refreshThrottler = ThrottleExecutor();
 
@@ -38,18 +43,15 @@ final class WidgetPositionController with WidgetsBindingObserver {
       _refreshThrottler.execute(
         duration: force ? Duration.zero : Duration(milliseconds: 400),
         onAction: () {
-          _eventController.add(WidgetPositionUpdateEvent.refreshPosition);
+          _eventController.add(WidgetPositionEvent.checkPositions());
           _restartRefreshThrottler();
         },
       );
     }
   }
 
-  @protected
-  @override
-  void didChangeMetrics() {
+  void _onWindowChanged() {
     _restartRefreshThrottler();
-    super.didChangeMetrics();
   }
 
   WidgetPositionId add(Key visibilityKey) {
@@ -69,11 +71,45 @@ final class WidgetPositionController with WidgetsBindingObserver {
     return _ids.remove(id) != null;
   }
 
+  void changePositionMetrics(
+    WidgetPositionId id,
+    WidgetPositionMetrics metrics,
+  ) {
+    _ids.update(
+      id,
+      (value) {
+        final newState = value.copyWith(
+          positionMetrics: metrics,
+        );
+        if (value.positionMetrics != metrics) {
+          _eventController.add(
+            WidgetPositionEvent.positionUpdated(
+              id: id,
+              state: newState,
+            ),
+          );
+        }
+        return newState;
+      },
+    );
+  }
+
   void changeVisible(WidgetPositionId id, VisibilityInfo visibilityInfo) {
     final visible = visibilityInfo.isVisible;
     _ids.update(
       id,
       (value) {
+        final newState = value.copyWith(
+          visibilityInfo: visibilityInfo,
+        );
+        if (value.visibilityInfo != newState.visibilityInfo) {
+          _eventController.add(
+            WidgetPositionEvent.positionUpdated(
+              id: id,
+              state: newState,
+            ),
+          );
+        }
         if (value.visibilityInfo.isVisible != visible) {
           if (visible) {
             _visible++;
@@ -81,13 +117,7 @@ final class WidgetPositionController with WidgetsBindingObserver {
             _visible--;
           }
         }
-        return value.copyWith(visibilityInfo: visibilityInfo);
-      },
-      ifAbsent: () {
-        if (visible) {
-          _visible++;
-        }
-        return WidgetPositionState.zero(visibilityInfo);
+        return newState;
       },
     );
 
@@ -106,5 +136,21 @@ final class WidgetPositionController with WidgetsBindingObserver {
         _restartRefreshThrottler();
       }
     }
+  }
+}
+
+class WidgetPositionObserver with WidgetsBindingObserver {
+  WidgetPositionObserver({
+    required this.onWindowChanged,
+  }) {
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  final VoidCallback onWindowChanged;
+
+  @override
+  void didChangeMetrics() {
+    onWindowChanged();
+    super.didChangeMetrics();
   }
 }

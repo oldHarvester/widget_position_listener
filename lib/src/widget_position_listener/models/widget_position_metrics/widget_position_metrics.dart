@@ -44,8 +44,6 @@
 //   List<Object?> get props => [size, bounds];
 // }
 
-import 'dart:ui';
-
 import 'package:flutter/widgets.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
