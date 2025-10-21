@@ -19,20 +19,32 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$WidgetPositionEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() checkPositions,
-    required TResult Function(WidgetPositionId id, WidgetPositionState state)
+    required TResult Function(Set<WidgetPositionId> ids) checkPositions,
+    required TResult Function(
+      WidgetPositionId id,
+      WidgetPositionState state,
+      WidgetPositionUpdatedType updateType,
+    )
     positionUpdated,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? checkPositions,
-    TResult? Function(WidgetPositionId id, WidgetPositionState state)?
+    TResult? Function(Set<WidgetPositionId> ids)? checkPositions,
+    TResult? Function(
+      WidgetPositionId id,
+      WidgetPositionState state,
+      WidgetPositionUpdatedType updateType,
+    )?
     positionUpdated,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? checkPositions,
-    TResult Function(WidgetPositionId id, WidgetPositionState state)?
+    TResult Function(Set<WidgetPositionId> ids)? checkPositions,
+    TResult Function(
+      WidgetPositionId id,
+      WidgetPositionState state,
+      WidgetPositionUpdatedType updateType,
+    )?
     positionUpdated,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
@@ -82,6 +94,8 @@ abstract class _$$WidgetCheckPositionEventImplCopyWith<$Res> {
     _$WidgetCheckPositionEventImpl value,
     $Res Function(_$WidgetCheckPositionEventImpl) then,
   ) = __$$WidgetCheckPositionEventImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({Set<WidgetPositionId> ids});
 }
 
 /// @nodoc
@@ -96,58 +110,105 @@ class __$$WidgetCheckPositionEventImplCopyWithImpl<$Res>
 
   /// Create a copy of WidgetPositionEvent
   /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? ids = null}) {
+    return _then(
+      _$WidgetCheckPositionEventImpl(
+        ids: null == ids
+            ? _value._ids
+            : ids // ignore: cast_nullable_to_non_nullable
+                  as Set<WidgetPositionId>,
+      ),
+    );
+  }
 }
 
 /// @nodoc
 
 class _$WidgetCheckPositionEventImpl implements WidgetCheckPositionEvent {
-  const _$WidgetCheckPositionEventImpl();
+  const _$WidgetCheckPositionEventImpl({
+    required final Set<WidgetPositionId> ids,
+  }) : _ids = ids;
+
+  final Set<WidgetPositionId> _ids;
+  @override
+  Set<WidgetPositionId> get ids {
+    if (_ids is EqualUnmodifiableSetView) return _ids;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableSetView(_ids);
+  }
 
   @override
   String toString() {
-    return 'WidgetPositionEvent.checkPositions()';
+    return 'WidgetPositionEvent.checkPositions(ids: $ids)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$WidgetCheckPositionEventImpl);
+            other is _$WidgetCheckPositionEventImpl &&
+            const DeepCollectionEquality().equals(other._ids, _ids));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_ids));
+
+  /// Create a copy of WidgetPositionEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$WidgetCheckPositionEventImplCopyWith<_$WidgetCheckPositionEventImpl>
+  get copyWith =>
+      __$$WidgetCheckPositionEventImplCopyWithImpl<
+        _$WidgetCheckPositionEventImpl
+      >(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() checkPositions,
-    required TResult Function(WidgetPositionId id, WidgetPositionState state)
+    required TResult Function(Set<WidgetPositionId> ids) checkPositions,
+    required TResult Function(
+      WidgetPositionId id,
+      WidgetPositionState state,
+      WidgetPositionUpdatedType updateType,
+    )
     positionUpdated,
   }) {
-    return checkPositions();
+    return checkPositions(ids);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? checkPositions,
-    TResult? Function(WidgetPositionId id, WidgetPositionState state)?
+    TResult? Function(Set<WidgetPositionId> ids)? checkPositions,
+    TResult? Function(
+      WidgetPositionId id,
+      WidgetPositionState state,
+      WidgetPositionUpdatedType updateType,
+    )?
     positionUpdated,
   }) {
-    return checkPositions?.call();
+    return checkPositions?.call(ids);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? checkPositions,
-    TResult Function(WidgetPositionId id, WidgetPositionState state)?
+    TResult Function(Set<WidgetPositionId> ids)? checkPositions,
+    TResult Function(
+      WidgetPositionId id,
+      WidgetPositionState state,
+      WidgetPositionUpdatedType updateType,
+    )?
     positionUpdated,
     required TResult orElse(),
   }) {
     if (checkPositions != null) {
-      return checkPositions();
+      return checkPositions(ids);
     }
     return orElse();
   }
@@ -185,7 +246,17 @@ class _$WidgetCheckPositionEventImpl implements WidgetCheckPositionEvent {
 }
 
 abstract class WidgetCheckPositionEvent implements WidgetPositionEvent {
-  const factory WidgetCheckPositionEvent() = _$WidgetCheckPositionEventImpl;
+  const factory WidgetCheckPositionEvent({
+    required final Set<WidgetPositionId> ids,
+  }) = _$WidgetCheckPositionEventImpl;
+
+  Set<WidgetPositionId> get ids;
+
+  /// Create a copy of WidgetPositionEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$WidgetCheckPositionEventImplCopyWith<_$WidgetCheckPositionEventImpl>
+  get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -195,7 +266,11 @@ abstract class _$$WidgetPositionUpdatedEventImplCopyWith<$Res> {
     $Res Function(_$WidgetPositionUpdatedEventImpl) then,
   ) = __$$WidgetPositionUpdatedEventImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({WidgetPositionId id, WidgetPositionState state});
+  $Res call({
+    WidgetPositionId id,
+    WidgetPositionState state,
+    WidgetPositionUpdatedType updateType,
+  });
 
   $WidgetPositionIdCopyWith<$Res> get id;
   $WidgetPositionStateCopyWith<$Res> get state;
@@ -218,7 +293,11 @@ class __$$WidgetPositionUpdatedEventImplCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? id = null, Object? state = null}) {
+  $Res call({
+    Object? id = null,
+    Object? state = null,
+    Object? updateType = null,
+  }) {
     return _then(
       _$WidgetPositionUpdatedEventImpl(
         id: null == id
@@ -229,6 +308,10 @@ class __$$WidgetPositionUpdatedEventImplCopyWithImpl<$Res>
             ? _value.state
             : state // ignore: cast_nullable_to_non_nullable
                   as WidgetPositionState,
+        updateType: null == updateType
+            ? _value.updateType
+            : updateType // ignore: cast_nullable_to_non_nullable
+                  as WidgetPositionUpdatedType,
       ),
     );
   }
@@ -260,16 +343,19 @@ class _$WidgetPositionUpdatedEventImpl implements WidgetPositionUpdatedEvent {
   const _$WidgetPositionUpdatedEventImpl({
     required this.id,
     required this.state,
+    required this.updateType,
   });
 
   @override
   final WidgetPositionId id;
   @override
   final WidgetPositionState state;
+  @override
+  final WidgetPositionUpdatedType updateType;
 
   @override
   String toString() {
-    return 'WidgetPositionEvent.positionUpdated(id: $id, state: $state)';
+    return 'WidgetPositionEvent.positionUpdated(id: $id, state: $state, updateType: $updateType)';
   }
 
   @override
@@ -278,11 +364,13 @@ class _$WidgetPositionUpdatedEventImpl implements WidgetPositionUpdatedEvent {
         (other.runtimeType == runtimeType &&
             other is _$WidgetPositionUpdatedEventImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.state, state) || other.state == state));
+            (identical(other.state, state) || other.state == state) &&
+            (identical(other.updateType, updateType) ||
+                other.updateType == updateType));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, id, state);
+  int get hashCode => Object.hash(runtimeType, id, state, updateType);
 
   /// Create a copy of WidgetPositionEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -298,33 +386,45 @@ class _$WidgetPositionUpdatedEventImpl implements WidgetPositionUpdatedEvent {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() checkPositions,
-    required TResult Function(WidgetPositionId id, WidgetPositionState state)
+    required TResult Function(Set<WidgetPositionId> ids) checkPositions,
+    required TResult Function(
+      WidgetPositionId id,
+      WidgetPositionState state,
+      WidgetPositionUpdatedType updateType,
+    )
     positionUpdated,
   }) {
-    return positionUpdated(id, state);
+    return positionUpdated(id, state, updateType);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? checkPositions,
-    TResult? Function(WidgetPositionId id, WidgetPositionState state)?
+    TResult? Function(Set<WidgetPositionId> ids)? checkPositions,
+    TResult? Function(
+      WidgetPositionId id,
+      WidgetPositionState state,
+      WidgetPositionUpdatedType updateType,
+    )?
     positionUpdated,
   }) {
-    return positionUpdated?.call(id, state);
+    return positionUpdated?.call(id, state, updateType);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? checkPositions,
-    TResult Function(WidgetPositionId id, WidgetPositionState state)?
+    TResult Function(Set<WidgetPositionId> ids)? checkPositions,
+    TResult Function(
+      WidgetPositionId id,
+      WidgetPositionState state,
+      WidgetPositionUpdatedType updateType,
+    )?
     positionUpdated,
     required TResult orElse(),
   }) {
     if (positionUpdated != null) {
-      return positionUpdated(id, state);
+      return positionUpdated(id, state, updateType);
     }
     return orElse();
   }
@@ -365,10 +465,12 @@ abstract class WidgetPositionUpdatedEvent implements WidgetPositionEvent {
   const factory WidgetPositionUpdatedEvent({
     required final WidgetPositionId id,
     required final WidgetPositionState state,
+    required final WidgetPositionUpdatedType updateType,
   }) = _$WidgetPositionUpdatedEventImpl;
 
   WidgetPositionId get id;
   WidgetPositionState get state;
+  WidgetPositionUpdatedType get updateType;
 
   /// Create a copy of WidgetPositionEvent
   /// with the given fields replaced by the non-null parameter values.

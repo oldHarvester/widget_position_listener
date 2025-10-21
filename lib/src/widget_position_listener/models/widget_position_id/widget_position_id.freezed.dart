@@ -17,7 +17,7 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$WidgetPositionId {
-  String get id => throw _privateConstructorUsedError;
+  int get id => throw _privateConstructorUsedError;
 
   /// Create a copy of WidgetPositionId
   /// with the given fields replaced by the non-null parameter values.
@@ -33,7 +33,7 @@ abstract class $WidgetPositionIdCopyWith<$Res> {
     $Res Function(WidgetPositionId) then,
   ) = _$WidgetPositionIdCopyWithImpl<$Res, WidgetPositionId>;
   @useResult
-  $Res call({String id});
+  $Res call({int id});
 }
 
 /// @nodoc
@@ -56,7 +56,7 @@ class _$WidgetPositionIdCopyWithImpl<$Res, $Val extends WidgetPositionId>
             id: null == id
                 ? _value.id
                 : id // ignore: cast_nullable_to_non_nullable
-                      as String,
+                      as int,
           )
           as $Val,
     );
@@ -72,7 +72,7 @@ abstract class _$$WidgetPositionIdImplCopyWith<$Res>
   ) = __$$WidgetPositionIdImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String id});
+  $Res call({int id});
 }
 
 /// @nodoc
@@ -94,7 +94,7 @@ class __$$WidgetPositionIdImplCopyWithImpl<$Res>
         id: null == id
             ? _value.id
             : id // ignore: cast_nullable_to_non_nullable
-                  as String,
+                  as int,
       ),
     );
   }
@@ -106,7 +106,7 @@ class _$WidgetPositionIdImpl extends _WidgetPositionId {
   const _$WidgetPositionIdImpl({required this.id}) : super._();
 
   @override
-  final String id;
+  final int id;
 
   @override
   String toString() {
@@ -137,12 +137,12 @@ class _$WidgetPositionIdImpl extends _WidgetPositionId {
 }
 
 abstract class _WidgetPositionId extends WidgetPositionId {
-  const factory _WidgetPositionId({required final String id}) =
+  const factory _WidgetPositionId({required final int id}) =
       _$WidgetPositionIdImpl;
   const _WidgetPositionId._() : super._();
 
   @override
-  String get id;
+  int get id;
 
   /// Create a copy of WidgetPositionId
   /// with the given fields replaced by the non-null parameter values.

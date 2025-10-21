@@ -31,6 +31,12 @@ final class WidgetPositionController {
 
   int get visible => _visible;
 
+  int _tempId = 0;
+
+  WidgetPositionId generateId() {
+    return WidgetPositionId(id: _tempId++);
+  }
+
   final StreamController<WidgetPositionEvent> _eventController =
       StreamController.broadcast();
 
@@ -41,21 +47,40 @@ final class WidgetPositionController {
   void _restartRefreshThrottler({bool force = false}) {
     if (hasVisible) {
       _refreshThrottler.execute(
-        duration: force ? Duration.zero : Duration(milliseconds: 400),
+        duration: force ? Duration.zero : Duration(seconds: 1),
         onAction: () {
-          _eventController.add(WidgetPositionEvent.checkPositions());
           _restartRefreshThrottler();
+          _updateAllPositions();
         },
       );
     }
+  }
+
+  void _updateAllPositions() {
+    _updatePositions(_ids.keys.toSet());
+  }
+
+  void _updatePositions(Set<WidgetPositionId> ids) {
+    _eventController.add(
+      WidgetPositionEvent.checkPositions(
+        ids: ids,
+      ),
+    );
+  }
+
+  void forceUpdatePosition(WidgetPositionId id) {
+    _updatePositions({id});
   }
 
   void _onWindowChanged() {
     _restartRefreshThrottler();
   }
 
-  WidgetPositionId add(Key visibilityKey) {
-    final id = WidgetPositionId.generate();
+  WidgetPositionId add(
+    Key visibilityKey, {
+    WidgetPositionId? initialId,
+  }) {
+    final id = initialId ?? generateId();
     _ids[id] = WidgetPositionState.zero(VisibilityInfo(key: visibilityKey));
     _visible++;
     _checkTimerContinue();
@@ -71,45 +96,62 @@ final class WidgetPositionController {
     return _ids.remove(id) != null;
   }
 
+  void _sendPositionUpdated(WidgetPositionId id) {
+    final state = _ids[id];
+    if (state != null) {
+      _eventController.add(
+        WidgetPositionEvent.positionUpdated(
+          id: id,
+          state: state,
+          updateType: WidgetPositionUpdatedType.position,
+        ),
+      );
+    }
+  }
+
+  void _sendVisibilityChanged(WidgetPositionId id) {
+    final state = _ids[id];
+    if (state != null) {
+      _eventController.add(
+        WidgetPositionEvent.positionUpdated(
+          id: id,
+          state: state,
+          updateType: WidgetPositionUpdatedType.visibility,
+        ),
+      );
+    }
+  }
+
   void changePositionMetrics(
     WidgetPositionId id,
     WidgetPositionMetrics metrics,
   ) {
+    var changed = false;
     _ids.update(
       id,
       (value) {
         final newState = value.copyWith(
           positionMetrics: metrics,
         );
-        if (value.positionMetrics != metrics) {
-          _eventController.add(
-            WidgetPositionEvent.positionUpdated(
-              id: id,
-              state: newState,
-            ),
-          );
-        }
+        changed = value.positionMetrics != metrics;
         return newState;
       },
     );
+    if (changed) {
+      _sendPositionUpdated(id);
+    }
   }
 
   void changeVisible(WidgetPositionId id, VisibilityInfo visibilityInfo) {
     final visible = visibilityInfo.isVisible;
+    var changed = false;
     _ids.update(
       id,
       (value) {
         final newState = value.copyWith(
           visibilityInfo: visibilityInfo,
         );
-        if (value.visibilityInfo != newState.visibilityInfo) {
-          _eventController.add(
-            WidgetPositionEvent.positionUpdated(
-              id: id,
-              state: newState,
-            ),
-          );
-        }
+        changed = value.visibilityInfo != newState.visibilityInfo;
         if (value.visibilityInfo.isVisible != visible) {
           if (visible) {
             _visible++;
@@ -120,6 +162,10 @@ final class WidgetPositionController {
         return newState;
       },
     );
+    
+    if (changed) {
+      _sendVisibilityChanged(id);
+    }
 
     _checkTimerContinue();
   }

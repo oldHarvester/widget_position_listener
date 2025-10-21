@@ -115,7 +115,8 @@ class __$$WidgetPositionMetricsImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$WidgetPositionMetricsImpl extends _WidgetPositionMetrics {
+class _$WidgetPositionMetricsImpl extends _WidgetPositionMetrics
+    with DiagnosticableTreeMixin {
   const _$WidgetPositionMetricsImpl({required this.size, required this.bounds})
     : super._();
 
@@ -125,8 +126,17 @@ class _$WidgetPositionMetricsImpl extends _WidgetPositionMetrics {
   final Rect bounds;
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'WidgetPositionMetrics(size: $size, bounds: $bounds)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'WidgetPositionMetrics'))
+      ..add(DiagnosticsProperty('size', size))
+      ..add(DiagnosticsProperty('bounds', bounds));
   }
 
   @override

@@ -12,11 +12,18 @@ import 'widget_position_controller.dart';
 class WidgetPositionListener extends StatefulWidget {
   const WidgetPositionListener({
     super.key,
+    this.id,
     required this.child,
     required this.onChange,
   });
 
-  final void Function(WidgetPositionState positionState) onChange;
+  final WidgetPositionId? id;
+  final void Function(
+    WidgetPositionId id,
+    WidgetPositionState positionState,
+    WidgetPositionUpdatedType type,
+  )
+  onChange;
   final Widget child;
 
   @override
@@ -25,14 +32,14 @@ class WidgetPositionListener extends StatefulWidget {
 
 class _WidgetPositionListenerState extends State<WidgetPositionListener> {
   late final WidgetPositionId id;
-  late final Key _visibilityKey = UniqueKey();
+  final Key _visibilityKey = UniqueKey();
   final positionController = WidgetPositionController.instance;
   StreamSubscription<WidgetPositionEvent>? _positionListener;
 
   @override
   void initState() {
     super.initState();
-    id = positionController.add(_visibilityKey);
+    id = positionController.add(_visibilityKey, initialId: widget.id);
     _startPositionListener();
   }
 
@@ -48,11 +55,15 @@ class _WidgetPositionListenerState extends State<WidgetPositionListener> {
       (event) {
         if (mounted) {
           event.when(
-            checkPositions: () {
-              _checkPosition();
+            checkPositions: (ids) {
+              if (ids.contains(id)) {
+                _checkPosition();
+              }
             },
-            positionUpdated: (id, state) {
-              widget.onChange(state);
+            positionUpdated: (id, state, updateType) {
+              if (id == this.id) {
+                widget.onChange(id, state, updateType);
+              }
             },
           );
         }
@@ -75,18 +86,6 @@ class _WidgetPositionListenerState extends State<WidgetPositionListener> {
 
   @override
   Widget build(BuildContext context) {
-    return VisibilityDetector(
-      key: _visibilityKey,
-      onVisibilityChanged: (info) {
-        final isVisible = info.visibleFraction > 0;
-        positionController.changeVisible(id, info);
-        if (isVisible) {
-          _startPositionListener();
-        } else {
-          _stopPositionListener();
-        }
-      },
-      child: widget.child,
-    );
+    return widget.child;
   }
 }
