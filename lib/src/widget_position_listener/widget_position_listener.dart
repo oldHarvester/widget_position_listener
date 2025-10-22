@@ -105,6 +105,12 @@ class _WidgetPositionListenerState extends State<WidgetPositionListener> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.child;
+    return VisibilityDetector(
+      key: _visibilityKey,
+      onVisibilityChanged: (info) {
+        positionController.changeVisible(id, info);
+      },
+      child: widget.child,
+    );
   }
 }
